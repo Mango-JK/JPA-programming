@@ -17,33 +17,17 @@ public class JpaMain {
         tx.begin();
 
         try {
-            Member findMember = em.find(Member.class, 1L);
 
-//            기본적인 추가작업 CREATE
-//            Member member = new Member();
-//            member.setId(3L);
-//            member.setName("HelloC");
-//            em.persist(member);
+            //영속
+            Member member = new Member(222L, "member222");
+            em.persist(member);
 
-//            기본적인 삭제작업 REMOVE
-//            em.remove(findMember);
+            em.flush();
 
-//            기본적인 수정 작업 UPDATE
-//            findMember.setName("HelloJPA");
-
-//            기본적인 조회
-            System.out.println("findmember.id = " + findMember.getId());
-            System.out.println("findMember.name = " + findMember.getName());
-
-
-            List<Member> result = em.createQuery("select m from Member as m where m.id > 1", Member.class)
-                    .getResultList();
-
-            for (Member mem: result) {
-                System.out.println("member.name = " + mem.getName());
-            }
+            System.out.println("------ " + em.find(Member.class, 200L).getName());
 
             tx.commit();
+            System.out.println("=======================");
         } catch (Exception e){
             tx.rollback();
         } finally {
