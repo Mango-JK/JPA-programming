@@ -494,7 +494,6 @@ tx.commit();	// 트랜잭션 커밋
 ### 연관관계 매핑 : @ManyToOne, @JoinColumn
 
 <hr/>
-
 # #13 데이터베이스 스키마 자동 생성
 
 ```java
@@ -534,8 +533,7 @@ tx.commit();	// 트랜잭션 커밋
 3. 회원을 설명할 수 있는 필드가 있어야 한다. 이 필드는 길이 제한이 없다.
 
    <hr/>
-
-   ```java
+```java
    // 회원을 구분하기 위한 enum 생성
    package hellojpa;
    
@@ -543,11 +541,10 @@ tx.commit();	// 트랜잭션 커밋
        USER, ADMIN
    }
    ```
-
    
 
-<hr/>
 
+<hr/>
 ```java
 package hellojpa;
 
@@ -584,7 +581,6 @@ public class Member {
 ```
 
 <hr/>
-
 ### 매핑 어노테이션 정리
 
 | 어노테이션  | 설명                               |
@@ -610,7 +606,6 @@ public class Member {
 | precision,<br />scale(DDL) | BigDecimal 타입에서 사용한다(BigInteger도 사용할 수 있다)<br />precision은 소수점을 포함한 전체 자릿수를, scale은 소수의 자릿수다. 참고로 double, float 타입에는 적용되지 않는다. | precision=19                        |
 
 <hr/>
-
 ### @Enumerated
 
 자바 Enum 타입을 매핑할 때 사용
@@ -618,7 +613,6 @@ public class Member {
 ### ⚠ ORDINAL 사용 금지 !
 
 <hr/>
-
 ### @Temporal
 
 날짜 타입(java.util.Date, java.util.Calendar)을 매핑할 때 사용
@@ -626,14 +620,12 @@ public class Member {
 **참고 : LocalDate, LocalDateTime을 사용할 때는 생략 가능(하이버네이트 지원)**
 
 <hr/>
-
 ### @Lob
 
 - Lob에는 지정할 수 있는 속성이 없다.
 - 매핑하는 필드 타입이 문자면 CLOB 매핑, 나머지는 BLOB 매핑
 
 <hr/>
-
 # #15 기본키 매핑
 
 ### 기본키 매핑 어노테이션
@@ -660,7 +652,6 @@ private Long id;
   - **AUTO** : 방언에 따라 자동 지정
 
 <hr/>
-
 ### IDENTITY 전략 - 특징
 
 - 기본키 생성을 데이터베이스에 위임
@@ -729,17 +720,48 @@ INSERT QUERY를 날리기 전에 SEQUENCE 값을 먼저 받아온 뒤 실행한�
   - 주문취소
 
 <hr/>
-
 ### 도메인 모델 분석
 
 - **회원과 주문의 관계** : **회원**은 여러 번 **주문**할 수 있다. (일대다)
 - **주문**과 **상품**의 관계 : **주문**할 때 여러 **상품**을 선택할 수 있다. 반대로 같은 상품도 여러 번 주문될 수 있다. **주문상품** 이라는 모델을 만들어서 다대다 관계를 일대다, 다대일 관계로 풀어냄
 
 <center><image src="./img/도메인모델분석.PNG"></center>
-
 <center><image src="./img/테이블설계.PNG"></center>
+<hr/>
+
+@ **springboot**에서 **DB table**에 컬럼을 만들 때 **카멜케이스**를 기본적으로
+
+**소문자 + 언더스코어**로 변환한다.
+
+ex) orderDate --> order_date
 
 <hr/>
+
+### 테이블 중심 설계의 문제점
+
+- 현재 방식은 객체 설계를 테이블 설계에 맞춘 방식
+- 테이블의 외래키를 객체에 그대로 가져옴
+- 객체 그래프 탐색이 불가능
+
+<hr/>
+
+# #17 연관관계 매핑 기초
+
+### 용어 이해
+
+- **방향**(Direction) : 단방향, 양방향
+- **다중성** : 다대일(N:1), 일대다(1:N), 일대일(1:1), 다대다(N:M) 이해
+- **연관관계의 주인(Owner)** : 객체 양방향 연관관계는 관리의 주인이 필요
+
+<br/>
+
+
+
+
+
+
+
+
 
 
 
