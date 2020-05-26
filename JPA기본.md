@@ -27,7 +27,6 @@
 <br/>
 
 <hr/>
-
 ## #4 JPA 소개
 
 - **JPA?**
@@ -79,9 +78,7 @@
 <br/>
 
 <center><image src="./img/H2Console.PNG"></center>
-
 <center><image src="./img/H2Init.PNG"></center>
-
 <br/>
 
 ### 메이븐 소개
@@ -95,8 +92,7 @@
 - 최근에는 그래들(Gradle)이 점점 유명
 
   <hr/>
-
-  ### 라이브러리 추가 - pom.xml
+### 라이브러리 추가 - pom.xml
 
 ```java
 <?xml version="1.0" encoding="UTF-8"?>
@@ -130,7 +126,6 @@
 ```
 
 <hr/>
-
 ### JPA 설정하기 - persistence.xml
 
 - JPA 설정 파일
@@ -166,15 +161,12 @@
 ```
 
 <hr/>
-
 # #6 Hello JPA 애플리케이션 개발
 
 ### JPA 구동 방식
 
 <center><image src="./img/JPA동작방식.PNG"></center>
-
 <hr/>
-
 ### Member Entity 만들기
 
 ```java
@@ -212,7 +204,6 @@ public class Member {
 ```
 
 <hr/>
-
 기본적인 CRUD 실습
 
 ```java
@@ -275,6 +266,7 @@ public class JpaMain {
 ### JPQL 소개
 
 - 가장 단순한 조회 방법
+  
   - EntityManager.find()
 - 나이가 18살 이상인 회원을 모두 검색하고 싶다면...?
 
@@ -398,7 +390,6 @@ em.remove(member);
 - 1차 캐시
 
 <center><image src="./img/1차캐시.PNG"></center>
-
 - 동일성(identity) 보장
 
 ```java
@@ -474,6 +465,279 @@ tx.commit();	// 트랜잭션 커밋
 **플러시는 영속성 컨텍스트를 비우지 않음**
 
 **트랜잭션이라는 작업 단위가 중요하다! -> 커밋 직전에만 동기화 하면 됨**
+
+<hr/>
+# #12 엔티티 매핑
+
+### 객체와 테이블 매핑 : @Entity, @Table
+
+**@Entity**
+
+- @Entity가 붙은 클래스는 JPA가 관리, 엔티티라 한다.
+
+- JPA를 사용해서 테이블과 매핑할 클래스는 @Entity 필수
+
+  **기본 생성자** 필수 
+
+  final클래스, enum, interface, inner 클래스 사용 X
+
+**@Table**
+
+- @Table은 엔티티와 매핑할 테이블 지정
+  - name : 매핑할 테이블 이름
+  - catalog, schema : 데이터베이스 catalog, schema 매핑
+
+### 필드와 컬럼 매핑 : @Column
+
+### 기본키 매핑 : @Id
+
+### 연관관계 매핑 : @ManyToOne, @JoinColumn
+
+<hr/>
+
+# #13 데이터베이스 스키마 자동 생성
+
+```java
+// 데이터베이스 스키마 자동설정
+// persistence.xml에서 속성을 지정
+<property name="hibernate.hbm2ddl.auto" value="create" />
+```
+
+
+
+| 옵션        | 설명                                         |
+| ----------- | -------------------------------------------- |
+| create      | 기존테이블 삭제 후 다시 생성 (DROP + CREATE) |
+| create-drop | create와 같으나 종료시점에 테이블 DROP       |
+| update      | 변경분만 반영(운영DB에는 사용하면 안됨)      |
+| validate    | 엔티티와 테이블이 정상 매핑되었는지만 확인   |
+| none        | 사용하지 않음                                |
+
+<br/>
+
+### ⚠ 운영 장비에는 절대 create, create-drop, update 사용하면 안된다
+
+- 개발 초기 단계는 create 또는 update
+- 테스트 서버는 update 또는 validate
+- 스테이징과 운영 서버는 validate 또는 none
+
+<br/>
+
+# #14 필드와 컬럼 매핑
+
+### 요구사항 추가
+
+1. 회원은 일반 회원과 관리자로 구분해야 한다.
+
+2. 회원 가입일과 수정일이 있어야 한다.
+
+3. 회원을 설명할 수 있는 필드가 있어야 한다. 이 필드는 길이 제한이 없다.
+
+   <hr/>
+
+   ```java
+   // 회원을 구분하기 위한 enum 생성
+   package hellojpa;
+   
+   public enum RoleType {
+       USER, ADMIN
+   }
+   ```
+
+   
+
+<hr/>
+
+```java
+package hellojpa;
+
+import javax.persistence.*;
+import java.util.Date;
+
+@Entity
+public class Member {
+
+    @Id
+    private Long id;
+
+    @Column(name = "name")
+    private String username;
+
+    private Integer age;
+
+    @Enumerated(EnumType.STRING)
+    private RoleType roleType;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createDate;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date lastModifiedDate;
+
+// 데이터의 컨텐츠가 아주 많은 경우
+    @Lob
+    private String description;
+
+    public Member(){
+    }
+}
+```
+
+<hr/>
+
+### 매핑 어노테이션 정리
+
+| 어노테이션  | 설명                               |
+| ----------- | ---------------------------------- |
+| @Column     | 컬럼 매핑                          |
+| @Temporal   | 날짜 타입 매핑                     |
+| @Enumerated | enum 타입 매핑                     |
+| @Lob        | BLOB, CLOB 매핑                    |
+| @Transient  | 특정 필드를 컬럼에 매핑시키지 않음 |
+
+<br/>
+
+### @Column
+
+| 속성                       | 설명                                                         | 기본값                              |
+| -------------------------- | ------------------------------------------------------------ | ----------------------------------- |
+| name                       | 필드와 매핑할 테이블의 컬럼 이름                             | 객체의 필드 이름                    |
+| insertable,<br />updatable | 등록, 변경 가능 여부                                         | TRUE                                |
+| nullable(DDL)              | null 값의 허용 여부를 설정한다. false로 설정하면 DDL 생성 시에 not null 제약조건이 붙는다. |                                     |
+| unique(DDL)                | @Table의 uniqueConstraints와 같지만 한 컬럼에 간단히 유니크 제약조건을 걸 때 사용한다. |                                     |
+| columnDefinition           | 데이터베이스 컬럼 정보를 직접 줄 수 있다.<br />ex) varchar(100) default 'EMPTY' | 필드의 자바 타입과 방언 정보를 사용 |
+| length(DDL)                | 문자 길이 제약조건, String 타입에만 사용                     | 255                                 |
+| precision,<br />scale(DDL) | BigDecimal 타입에서 사용한다(BigInteger도 사용할 수 있다)<br />precision은 소수점을 포함한 전체 자릿수를, scale은 소수의 자릿수다. 참고로 double, float 타입에는 적용되지 않는다. | precision=19                        |
+
+<hr/>
+
+### @Enumerated
+
+자바 Enum 타입을 매핑할 때 사용
+
+### ⚠ ORDINAL 사용 금지 !
+
+<hr/>
+
+### @Temporal
+
+날짜 타입(java.util.Date, java.util.Calendar)을 매핑할 때 사용
+
+**참고 : LocalDate, LocalDateTime을 사용할 때는 생략 가능(하이버네이트 지원)**
+
+<hr/>
+
+### @Lob
+
+- Lob에는 지정할 수 있는 속성이 없다.
+- 매핑하는 필드 타입이 문자면 CLOB 매핑, 나머지는 BLOB 매핑
+
+<hr/>
+
+# #15 기본키 매핑
+
+### 기본키 매핑 어노테이션
+
+- **@ID**
+
+- ### @GeneratedValue
+
+```java
+@Id @GeneratedValue(strategy = GenerationType.AUTO)
+private Long id;
+```
+
+<br/>
+
+### 기본키 매핑 방법
+
+- 직접 할당 : @Id만 사용
+- 자동 생성(@GeneratedValue)
+  - **IDENTITY** : 데이터베이스에 위임, MYSQL
+  - **SEQUENCE** : 데이터베이스 시퀀스 오브젝트 사용
+  - **TABLE** : 키 생성용 테이블 사용, 모든 DB에서 사용
+    - @TableGenerator 필요
+  - **AUTO** : 방언에 따라 자동 지정
+
+<hr/>
+
+### IDENTITY 전략 - 특징
+
+- 기본키 생성을 데이터베이스에 위임
+- 주로 MySQL, PostgreSQL, SQL Server, DB2에서 사용
+- JPA는 보통 트랝개션 커밋 시점에 INSERT SQL 실행
+- AUTO_INCREMENT는 데이터베이스에 INSERT SQL을 실행한 이후에 ID값을 알 수 있음.
+- IDENTITY 전략은 em.persist() 시점에 즉시 INSERT SQL을 실행하고 DB에서 식별자를 조회
+
+```java
+// IDENTITY 전략의 경우 PK값을 설정하지 않는다.
+// 하지만 이럴 때, PK값을 DB에 넣기 전까지 알 수가 없다
+
+// ---> em.persist(member) 로 일단 호출을 한 시점에
+// member.getId(); 를 사용하여 조회한다.
+        try {
+            Member member = new Member();
+            member.setUsername("CA");
+            System.out.println("==============");
+            em.persist(member);
+            System.out.println("member.id =  " + member.getId());
+            System.out.println("==============");
+
+            tx.commit();
+        } catch (Exception e){
+            tx.rollback();
+        } finally {
+            em.close();
+        }
+```
+
+<br/>
+
+### SEQUENCE 전략  - 특징
+
+이와 대조적으로 SEQUENCE 전략에서는,
+
+INSERT QUERY를 날리기 전에 SEQUENCE 값을 먼저 받아온 뒤 실행한다.
+
+--> 영속성 컨텍스트에 KEY값들이 쌓여 있어서 버퍼링(쭉 모았다가 INSERT)이 가능
+
+미리 **allocationSize를 50**으로 잡아두고 호출 -> **성능 최적화**에 사용됨
+
+<br/>
+
+# #16 실전 예제 1 - 요구사항 분석과 기본 매핑
+
+### 요구사항 분석
+
+- 회원은 상품을 주문할 수 있다.
+- 주문 시 여러 종류의 상품을 선택할 수 있다.
+
+<br/>
+
+### 기능 목록
+
+- 회원기능
+  - 회원등록
+  - 회원조회
+- 상품 기능
+  - 상품등록
+  - 상품수정
+  - 상품조회
+- 주문기능
+  - 상품주문
+  - 주문내역조회
+  - 주문취소
+
+<hr/>
+
+### 도메인 모델 분석
+
+- **회원과 주문의 관계** : **회원**은 여러 번 **주문**할 수 있다. (일대다)
+- **주문**과 **상품**의 관계 : **주문**할 때 여러 **상품**을 선택할 수 있다. 반대로 같은 상품도 여러 번 주문될 수 있다. **주문상품** 이라는 모델을 만들어서 다대다 관계를 일대다, 다대일 관계로 풀어냄
+
+<center><image src="./img/도메인모델분석.PNG"></center>
+
+<center><image src="./img/테이블설계.PNG"></center>
 
 <hr/>
 
