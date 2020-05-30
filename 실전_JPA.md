@@ -118,23 +118,18 @@ public class MemberRepositoryTest extends TestCase {
 <center><image src="./img/archi_1.PNG"></center>
 <center><image src="./img/archi_2.PNG"></center>
 <center><image src="./img/archi_3.PNG"></center>
-
 <br/>
 
 <center><image src="./img/tips_2.PNG"></center>
-
 <br/>
 
 <center><image src="./img/tips_3.PNG"></center>
-
 <br/>
 
 <hr/>
-
 <br/>
 
 <center><image src="./img/tips_1.PNG"></center>
-
 <br/>
 
 <br/>
@@ -142,11 +137,9 @@ public class MemberRepositoryTest extends TestCase {
 ## 엔티티 클래스 개발
 
 <center><image src="./img/tips_4.PNG"></center>
-
 <br/>
 
 <hr/>
-
 ## 엔티티 설계시 주의점
 
 
@@ -176,7 +169,6 @@ public class MemberRepositoryTest extends TestCase {
 ## 애플리케이션 아키텍처
 
 <center><image src="./img/architecture.PNG"></center>
-
 <br/>
 
 ### 패키지 구조
@@ -196,11 +188,9 @@ public class MemberRepositoryTest extends TestCase {
 : 서비스, 리포지토리 계층을 개발하고, 테스트 케이스를 작성해서 검증, 마지막에 웹 계층 적용
 
 <hr/>
-
 ## 회원 도메인 개발
 
 <center>Member</center>
-
 ```java
 @Entity
 @Getter @Setter
@@ -224,9 +214,7 @@ public class Member {
 <br/>
 
 <hr/>
-
 <center>MemberRepository</center>
-
 ```java
 @Repository
 public class MemberRepository {
@@ -257,9 +245,7 @@ public class MemberRepository {
 <br/>
 
 <hr/>
-
 <center>MemberService</center>
-
 ```java
 @Service
 @Transactional(readOnly = true)
@@ -289,6 +275,134 @@ public class MemberService {
 
     public Member findOne(Long memberId){
         return memberRepository.findOne(memberId);
+    }
+}
+```
+
+<br/>
+
+<hr/>
+
+## 상품 도메인 개발
+
+<center>Item</center>
+
+```java
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "dtype")
+@Getter @Setter
+public abstract class Item {
+
+    @Id
+    @GeneratedValue
+    @Column(name = "item_id")
+    private Long id;
+
+    private String name;
+    private int price;
+    private int stockQuantity;
+
+    @ManyToMany(mappedBy = "items")
+    private List<Category> categories = new ArrayList<>();
+
+    //==비즈니스 로직==//
+    public void addStock(int quantity){
+        this.stockQuantity+=quantity;
+    }
+
+    public void removeStock(int quantity){
+        int restStock = this.stockQuantity - quantity;
+        if(restStock < 0){
+            throw new NotEnoughStockException("need more stock");
+        }
+        this.stockQuantity = restStock;
+    }
+
+}
+```
+
+<br/>
+
+```java
+package jpabook.jpashop.exception;
+
+public class NotEnoughStockException extends RuntimeException {
+    public NotEnoughStockException() {
+        super();
+    }
+
+    public NotEnoughStockException(String message) {
+        super(message);
+    }
+
+    public NotEnoughStockException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public NotEnoughStockException(Throwable cause) {
+        super(cause);
+    }
+}
+```
+
+<br/>
+
+<hr/>
+
+<center>ItemRepository</center>
+
+```java
+@Repository
+@RequiredArgsConstructor
+public class ItemRepository {
+
+    private final EntityManager em;
+
+    public void save(Item item){
+        if(item.getId() == null){
+            em.persist(item);
+        } else {
+            em.merge(item);
+        }
+    }
+    
+    public Item findOne(Long id){
+        return em.find(Item.class, id);
+    }
+
+    public List<Item> findAll(){
+        return em.createQuery("select i from Item i", Item.class)
+                .getResultList();
+    }
+}
+```
+
+<br/>
+
+<hr/>
+
+<center>ItemService</center>
+
+```java
+@Service
+@Transactional(readOnly = true)
+@RequiredArgsConstructor
+public class ItemService {
+
+    private final ItemRepository itemRepository;
+
+    @Transactional
+    public void saveItem(Item item){
+        itemRepository.save(item);
+    }
+
+    public List<Item> findItems() {
+        return itemRepository.findAll();
+    }
+
+    public Item findOne(Long itemId){
+        return itemRepository.findOne(itemId);
     }
 }
 ```
