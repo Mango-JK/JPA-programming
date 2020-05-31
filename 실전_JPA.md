@@ -282,11 +282,9 @@ public class MemberService {
 <br/>
 
 <hr/>
-
 ## 상품 도메인 개발
 
 <center>Item</center>
-
 ```java
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -349,9 +347,7 @@ public class NotEnoughStockException extends RuntimeException {
 <br/>
 
 <hr/>
-
 <center>ItemRepository</center>
-
 ```java
 @Repository
 @RequiredArgsConstructor
@@ -381,9 +377,7 @@ public class ItemRepository {
 <br/>
 
 <hr/>
-
 <center>ItemService</center>
-
 ```java
 @Service
 @Transactional(readOnly = true)
@@ -407,3 +401,108 @@ public class ItemService {
 }
 ```
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## ⚡ 양방향 관계를 맺었지만 카테고리는 책의 정보를 알지 못한다.
+
+```java
+public static void insertAndFind (EntityManager em) {
+	Category category = new Category();
+	category.setName("IT");
+	em.persist(category);
+	
+	Book book = new Book();
+	book.setTitle("Operation System");
+	book.setCategory(category);
+	em.persist(book);
+	
+	List<Book> bookList = category.getBooks();
+	for( Book item: bookList) {
+		System.out.println(item.getTitle());
+	}
+}
+```
+
+**persistence context에서 카테고리 엔티티가 책 엔티티의 정보들을 가지고 있지 않기 때문입니다.**
+
+즉, 아직 DB에 반영되지 않은 상태이므로 책 정보들이 persistence context에 존재하지 않은 것이죠.
+
+따라서 아직 DB에 저장되지 않은, persistence context에 존재하는 책의 정보들을 카테고리 엔티티가 참조할 수 있도록 수정해야 합니다.
+
+```java
+public static void insertAndFind (EntityManager em) {
+	Category category = new Category();
+	category.setName("IT");
+	em.persist(category);
+	
+	Book book = new Book();
+	book.setTitle("Operation System");
+	book.setCategory(category);
+	book.getCategory().getBooks().add(book);
+	em.persist(book);
+	
+	List<Book> bookList = category.getBooks();
+	for( Book item : bookList) {
+		System.out.println(item.getTitle());
+	}
+}
+```
+
+```java
+book.getCategory().getBooks().add(book);
+```
+
+이 한줄의 코드만 추가하면 persistence context에서도 카테고리는 책 엔티티를 참조 할 수 있습니다.
+
+<br/>
+
+만약 " Operation System " 책을 새로운 카테고리로 변경하면 어떻게 될까요?
+
+```java
+public static void update(EntityManager em) {
+	Category newCategory = new Category();
+	newCategory.setName("etc");
+	em.persist(newCategory);
+	
+	Book book = em.find(Book.class, 1);
+	book.setCategory(newCategory);
+	book.getCategory().getBooks().add(book);
+}
+```
+
+카테고리가 변경 되었지만 여전히 IT 카테고리는 operation system 책을 참조하고 있습니다.
+
+따라서 이 문제를 해결해야 합니다.
+
+```java
+public void setCategory(Category category) {
+	// 이미 카테고리가 있을 경우 관계를 제거한다.
+	if( this.category != null ) {
+		this.category.getBooks().remove(this);
+	}
+	
+	this.category = category;
+	
+	if( category != null ) {
+		category.getBooks().add(this);
+	}
+}
+```
+
+Book 클래스에서 setCategory() 메서드를 수정했습니다.
+
+
+
+최종적으로 카테고리는 persistence context에서 책 엔티티를 올바르게 참조 할 수 있게 되었습니다.
