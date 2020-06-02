@@ -20,26 +20,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="28ebdb6d-1fb2-4c5c-a2fc-3d7674e1b92d" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/jpashop/src/main/java/jpabook/jpashop/exception/NotEnoughStockException.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/jpashop/src/main/java/jpabook/jpashop/repository/ItemRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/jpashop/src/main/java/jpabook/jpashop/repository/OrderRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/jpashop/src/main/java/jpabook/jpashop/service/ItemService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/jpashop/src/main/java/jpabook/jpashop/service/OrderService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../jpashop.zip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/jpashop.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/jpashop.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jpashop/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/jpashop/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jpashop/src/main/java/jpabook/jpashop/domain/Order.java" beforeDir="false" afterPath="$PROJECT_DIR$/jpashop/src/main/java/jpabook/jpashop/domain/Order.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jpashop/src/main/java/jpabook/jpashop/domain/OrderItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/jpashop/src/main/java/jpabook/jpashop/domain/OrderItem.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jpashop/src/main/java/jpabook/jpashop/domain/item/Item.java" beforeDir="false" afterPath="$PROJECT_DIR$/jpashop/src/main/java/jpabook/jpashop/domain/item/Item.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../실전_JPA.md" beforeDir="false" afterPath="$PROJECT_DIR$/../실전_JPA.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -126,6 +108,8 @@
       <workItem from="1590729284102" duration="123000" />
       <workItem from="1590731489668" duration="4129000" />
       <workItem from="1590803703979" duration="4163000" />
+      <workItem from="1590933766635" duration="21000" />
+      <workItem from="1591108719919" duration="13000" />
     </task>
     <servers />
   </component>

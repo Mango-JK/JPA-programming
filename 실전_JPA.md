@@ -8,12 +8,12 @@
 **build.gradle**을 실행하여 dependency를 모두 받아준 이후
 
 1. **plugins -> lombok -> Install**
-2. **preferenct -> Annotaion Processors 설정**
+2. **preference -> Annotaion Processors 설정**
 
 <br/>
 
 <hr/>
- 핵심 라이브러리
+###  핵심 라이브러리
 
 - 스프링 MVC
 - 스프링 ORM
@@ -142,13 +142,13 @@ public class MemberRepositoryTest extends TestCase {
 <hr/>
 ## 엔티티 설계시 주의점
 
-
+<br/>
 
 ### 엔티티에는 가급적 Setter를 사용하지 말자
 
 ### Setter가 모두 열려 있다. 변경 포인트가 너무 많아서, 유지보수가 어렵다.
 
-
+<br/>
 
 ### 모든 연관관계는 지연로딩으로 설정!
 
@@ -401,108 +401,146 @@ public class ItemService {
 }
 ```
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## ⚡ 양방향 관계를 맺었지만 카테고리는 책의 정보를 알지 못한다.
-
-```java
-public static void insertAndFind (EntityManager em) {
-	Category category = new Category();
-	category.setName("IT");
-	em.persist(category);
-	
-	Book book = new Book();
-	book.setTitle("Operation System");
-	book.setCategory(category);
-	em.persist(book);
-	
-	List<Book> bookList = category.getBooks();
-	for( Book item: bookList) {
-		System.out.println(item.getTitle());
-	}
-}
-```
-
-**persistence context에서 카테고리 엔티티가 책 엔티티의 정보들을 가지고 있지 않기 때문입니다.**
-
-즉, 아직 DB에 반영되지 않은 상태이므로 책 정보들이 persistence context에 존재하지 않은 것이죠.
-
-따라서 아직 DB에 저장되지 않은, persistence context에 존재하는 책의 정보들을 카테고리 엔티티가 참조할 수 있도록 수정해야 합니다.
-
-```java
-public static void insertAndFind (EntityManager em) {
-	Category category = new Category();
-	category.setName("IT");
-	em.persist(category);
-	
-	Book book = new Book();
-	book.setTitle("Operation System");
-	book.setCategory(category);
-	book.getCategory().getBooks().add(book);
-	em.persist(book);
-	
-	List<Book> bookList = category.getBooks();
-	for( Book item : bookList) {
-		System.out.println(item.getTitle());
-	}
-}
-```
-
-```java
-book.getCategory().getBooks().add(book);
-```
-
-이 한줄의 코드만 추가하면 persistence context에서도 카테고리는 책 엔티티를 참조 할 수 있습니다.
-
 <br/>
 
-만약 " Operation System " 책을 새로운 카테고리로 변경하면 어떻게 될까요?
+<hr/>
+
+## 주문 도메인 개발
+
+<center>Order</center>
 
 ```java
-public static void update(EntityManager em) {
-	Category newCategory = new Category();
-	newCategory.setName("etc");
-	em.persist(newCategory);
-	
-	Book book = em.find(Book.class, 1);
-	book.setCategory(newCategory);
-	book.getCategory().getBooks().add(book);
+@Entity
+@Table(name = "orders")
+@Getter @Setter
+public class Order {
+
+    @Id
+    @GeneratedValue
+    @Column(name = "order_id")
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    private List<OrderItem> orderItems = new ArrayList<>();
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "delivery_id")
+    private Delivery delivery;
+
+    private LocalDateTime orderDate;    //주문시간
+
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status; // 주문 상태 [ORDER, CANCEL]
+
+    //==생성 메서드==//
+    public static Order createOrder(Member member, Delivery delivery, OrderItem... orderItems){
+        Order order = new Order();
+        order.setMember(member);
+        order.setDelivery(delivery);
+
+        for (OrderItem orderItem:
+             orderItems) {
+            order.addOrderItem(orderItem);
+        }
+
+        order.setStatus(OrderStatus.ORDER);
+        order.setOrderDate(LocalDateTime.now());
+        return order;
+    }
+
+    private void addOrderItem(OrderItem orderItem) {
+        orderItems.add(orderItem);
+        orderItem.setOrder(this);
+    }
+
+    //== 비즈니스 로직==//
+    public void cancel(){
+        if(delivery.getStatus() == DeliveryStatus.COMP){
+            throw new IllegalStateException("이미 배송 완료된 상품은 취소가 불가능합니다.");
+        }
+        this.setStatus(OrderStatus.CANCEL);
+        for (OrderItem orderItem : orderItems) {
+            orderItem.cancel();
+        }
+    }
+
+    //== 조회 로직==//
+    public int getTotalPrice(){
+        int totalPrice = 0;
+        for (OrderItem orderItem : orderItems) {
+            totalPrice += orderItem.getTotalPrice();
+        }
+        return totalPrice;
+    }
 }
 ```
 
-카테고리가 변경 되었지만 여전히 IT 카테고리는 operation system 책을 참조하고 있습니다.
+## ⚡ CASCADE의 사용
 
-따라서 이 문제를 해결해야 합니다.
+### Order에서 주문이 생성된 경우
 
 ```java
-public void setCategory(Category category) {
-	// 이미 카테고리가 있을 경우 관계를 제거한다.
-	if( this.category != null ) {
-		this.category.getBooks().remove(this);
-	}
-	
-	this.category = category;
-	
-	if( category != null ) {
-		category.getBooks().add(this);
-	}
-}
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    private List<OrderItem> orderItems = new ArrayList<>();
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "delivery_id")
+    private Delivery delivery;
 ```
 
-Book 클래스에서 setCategory() 메서드를 수정했습니다.
+### OrderItem과 Delivery에도 Order가 persist될 때 같이 persist된다.
 
 
 
-최종적으로 카테고리는 persistence context에서 책 엔티티를 올바르게 참조 할 수 있게 되었습니다.
+<hr/>
+
+<center>OrderService</center>
+
+```java
+@Service
+@Transactional(readOnly = true)
+@RequiredArgsConstructor
+public class OrderService {
+
+    private final OrderRepository orderRepository;
+    private final MemberRepository memberRepository;
+    private final ItemRepository itemRepository;
+
+    /*
+     * 주문
+     */
+    @Transactional
+    public Long order(Long memberId, Long itemId, int count){
+        // 엔티티 조회
+        Member member = memberRepository.findOne(memberId);
+        Item item = itemRepository.findOne(itemId);
+
+        //배송정보 생성
+        Delivery delivery = new Delivery();
+        delivery.setAddress(member.getAddress());
+
+        //주문상품 생성
+        OrderItem orderItem = OrderItem.createOrderItem(item, item.getPrice(), count);
+
+        //주문 생성
+        Order order = Order.createOrder(member, delivery, orderItem);
+
+        //주문 저장
+        orderRepository.save(order);
+
+        return order.getId();
+    }
+
+
+    // 취소
+
+    // 검색
+```
+
+<hr/>
+
+## 

@@ -782,6 +782,7 @@ Team findTeam = em.find(Team.class, team.getId());
 ### 단방향 연관관계
 
 <center><image src="./img/단방향_모델링.PNG"></center>
+
 <br/>
 
 <br/>
@@ -809,6 +810,7 @@ em.persist(member)
 # #18 양방향 연관관계와 주인 ⭐
 
 <center><image src="./img/양방향_모델링.PNG"></center>
+
 <br/>
 
 ### 연관관계의 주인과 mappedBy
@@ -830,6 +832,7 @@ em.persist(member)
 <br/>
 
 <hr/>
+
 ### 객체의 양방향 관계
 
 - 객체의 양방향 관계는 **사실 양방향 관계가 아니라 서로 다른 단방향 관계 2개**다.
@@ -853,9 +856,11 @@ JOIN MEMBER M ON T.TEAM_ID = M.TEAM_ID
 ```
 
 <hr/>
+
 ## 딜레마가 온다 - MEMBER, TEAM 중 무슨 KEY를 봐야하나?
 
 <center><image src="./img/외래키.PNG"></center>
+
 <br/>
 
 # 연관관계의 주인(Owner)
@@ -871,15 +876,19 @@ JOIN MEMBER M ON T.TEAM_ID = M.TEAM_ID
 <br/>
 
 <center><image src="./img/주인.PNG"></center>
+
 <br/>
 
 <hr/>
+
 ## ⚠ 양방향 매핑시 가장 많이 하는 실수
 
 (연관관계의 주인에 값을 입력하지 않음)
 
 <center><image src="./img/양방향_주의.PNG"></center>
+
 <hr/>
+
 ###  양방향 매핑시 연관관계의 주인에 값을 입력해야 한다.
 
 (순수한 객체 관계를 고려하면 항상 양쪽다 값을 입력해야 한다.)
@@ -901,6 +910,7 @@ JOIN MEMBER M ON T.TEAM_ID = M.TEAM_ID
 ```
 
 <hr/>
+
 ## ⚠  양방향 연관관계 주의
 
 - ### 순수 객체 상태를 고려해서 항상 양쪽에 값을 설정하자
@@ -923,8 +933,9 @@ public void changeTeam(Team team){
   - **Controller에서 Entity JSON 반환은 하지 말자!**
 
   <hr/>
-## 양방향 매핑 정리
-  
+
+  ## 양방향 매핑 정리
+
 - **단방향 매핑만으로도 이미 연관관계 매핑은 완료**
 
 - 양방향 매핑은 반대 방향으로 조회 기능이 추가된 것 뿐
@@ -940,34 +951,13 @@ public void changeTeam(Team team){
 # #20 실전 예제 2 - 연관관계 매핑 시작
 
 <center><image src="./img/테이블구조_2.PNG"></center>
+
 - **하나의 멤버는 여러 개의 주문을 할 수가 있고,**
 - **주문과 아이템 사이의 다대다 관계를 1:N 과 N:1 로 풀어냈다.**
 
 <br/>
 
 <center><image src="./img/객체구조_2.PNG"></center>
-
-<br/>
-
-# #21 다양한 연관관계 매핑
-
-### 연관관계 매핑시 고려사항 3가지
-
-- 다중성
-  - 다대일 : ManyToOne
-  - 일대다 : OneToMany
-  - 일대일 : OneToOne
-  - 다대다 : ManyToMany
-- 단방향, 양방향
-- 연관관계의 주인
-
-
-
-
-
-
-
-
 
 
 
