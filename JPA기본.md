@@ -134,7 +134,10 @@
 </project>
 ```
 
+
+
 <hr/>
+
 ### JPA 설정하기 - persistence.xml
 
 - JPA 설정 파일
@@ -169,7 +172,9 @@
 </persistence>
 ```
 
+
 <hr/>
+
 # #6 Hello JPA 애플리케이션 개발
 
 ### JPA 구동 방식
@@ -186,12 +191,10 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 
 @Entity
-//@Table(name = "USER")
 public class Member {
 
     @Id
     private Long id;
-    //@Column("username")
     private String name;
 
     public Long getId() {
@@ -248,7 +251,6 @@ public class JpaMain {
 //            findMember.setName("HelloJPA");
 
 //            기본적인 조회
-            System.out.println("findmember.id = " + findMember.getId());
             System.out.println("findMember.name = " + findMember.getName());
 
             tx.commit();
@@ -263,6 +265,8 @@ public class JpaMain {
     }
 }
 ```
+
+
 
 ### ※ 주의
 
@@ -955,7 +959,6 @@ public void changeTeam(Team team){
 <br/>
 
 <center><image src="./img/객체구조_2.PNG"></center>
-
 
 
 
