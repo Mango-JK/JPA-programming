@@ -137,7 +137,6 @@
 
 
 <hr/>
-
 ### JPA 설정하기 - persistence.xml
 
 - JPA 설정 파일
@@ -174,7 +173,6 @@
 
 
 <hr/>
-
 # #6 Hello JPA 애플리케이션 개발
 
 ### JPA 구동 방식
@@ -336,15 +334,12 @@ member.setUsername("회원1");
   member.setId("member1");
   member.setUsername("회원1");
   
-  Entitymanager em = emf.createEntityManager();
-  em.getTransaction().begin();
-  
   // 객체를 저장한 상태(영속)
   em.persist(member);
   ```
-
   
-
+  
+  
 - 준영속
 
   - 영속성 컨텍스트에 저장되었다가 **분리**된 상태
@@ -959,7 +954,6 @@ public void changeTeam(Team team){
 <br/>
 
 <center><image src="./img/객체구조_2.PNG"></center>
-
 
 
 
