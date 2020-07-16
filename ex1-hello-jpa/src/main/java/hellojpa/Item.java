@@ -5,7 +5,7 @@ import javax.persistence.*;
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn
-public class Item {
+public class Item{
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

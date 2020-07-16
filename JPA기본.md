@@ -1096,3 +1096,59 @@ public class Movie extends Item {
 
 <br/>
 
+# # 실전 예제 4 - 상속관계 매핑
+
+- 상품의 종류는 음반, 도서, 영화가 있고 이후 더 확장될 수 있다.
+- 모든 데이터는 등록일과 수정일이 필수다.
+
+<br/>
+
+# BaseEntity
+
+```java
+package jpabook.jpashop.domain;
+
+import javax.persistence.MappedSuperclass;
+import java.time.LocalDateTime;
+
+@MappedSuperclass
+public abstract class BaseEntity {
+    private String createdBy;
+    private LocalDateTime createdDate;
+    private String lastModifiedBy;
+    private LocalDateTime lastModifiedDate;
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(LocalDateTime createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public String getLastModifiedBy() {
+        return lastModifiedBy;
+    }
+
+    public void setLastModifiedBy(String lastModifiedBy) {
+        this.lastModifiedBy = lastModifiedBy;
+    }
+
+    public LocalDateTime getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    public void setLastModifiedDate(LocalDateTime lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
+}
+```
+
