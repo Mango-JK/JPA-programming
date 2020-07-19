@@ -1012,11 +1012,9 @@ public void changeTeam(Team team){
 # # 25 실전예제 3 - 다양한 연관관계 매핑
 
 <center><image src="./img/실전3_설계.PNG"></center>
-
 <br/>
 
 <center><image src="./img/실전3_ERD.PNG"></center>
-
 <br/>
 
 ## 상속관계 매핑
@@ -1066,7 +1064,6 @@ public void changeTeam(Team team){
 <br/>
 
 <hr/>
-
 ## ✅ 단일 테이블 전략 채택
 
 ### 성능이 빠르고, 조회쿼리가 단순함
@@ -1080,19 +1077,14 @@ public class Item {
     private Long id;
     private String name;
     private int price;
+    private String director;
+    private String actor;
+    private String isbn;
+    private String artist;
 }
 ```
 
 <br/>
-
-```java
-@Entity
-@DiscriminatorValue("MOVIE")
-public class Movie extends Item {
-    private String director;
-    private String actor;
-}
-```
 
 <br/>
 
@@ -1151,4 +1143,75 @@ public abstract class BaseEntity {
     }
 }
 ```
+
+<br/>
+
+# 프록시
+
+### em.find() : 데이터베이스를 통해서 실제 엔티티 객체 조회
+
+### em.getReference() : 데이터베이스 조회를 미루는 가짜(프록시) 엔티티 객체 조회
+
+<br/>
+
+## 프록시 특징
+
+- ### 실제 클래스를 상속 받아서 만들어짐
+
+- ### 실제 클래스와 겉 모양이 같다.
+
+- ### 사용하는 입장에서는 진짜 객체인지 프록시 객체인지 구분하지 않고 사용하면 됨.
+
+<br/>
+
+<center><image src="./img/proxy.PNG"></center>
+
+<br/>
+
+# 즉시 로딩과 지연 로딩
+
+<center><image src="./img/지연로딩.PNG"></center>
+
+**FetchType.LAZY**
+
+를 사용하면 Team을 가져올 때 Proxy를 사용한다.
+
+<br/>
+
+### FetchType.EAGER
+
+를 사용하면 Team 객체까지 **즉시로딩이 가능**하다.
+
+<br/>
+
+## 가급적 지연 로딩(LAZY)만 사용!
+
+* ### 즉시 로딩은 JPQL에서 " N + 1  문제" 를 일으킨다.
+
+<br/>
+
+```java
+@ManyToOne, @OneToOne은 기본이 즉시 로딩이다.
+--> LAZY로 설정!
+```
+
+<br/>
+
+# 기본값 타입
+
+## JPA의 데이터 타입 분류
+
+- ### 엔티티 타입
+
+  - @Entity로 정의하는 객체
+  - 데이터가 변해도 식별자로 지속해서 추적 가능
+  - 예) 회원 엔티티의 키나 나이 값을 변경해도 식별자로 인식 가능
+
+- ### 값 타입
+
+  - int, Integer, String처럼 단순히 값으로 사용하는 자바 기본 타입이나 객체
+  - 식별자가 없고 값만 있으므로 변경시 추적 불가
+  - 예) 숫자 100을 200으로 변경하면 완전히 다른 값으로 대체
+
+<br/>
 
