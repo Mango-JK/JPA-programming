@@ -1215,3 +1215,83 @@ public abstract class BaseEntity {
 
 <br/>
 
+<hr/>
+
+## 값 타입 분류
+
+- ### 기본값 타입
+
+  - 자바 기본 타입(int, double)
+  - 래퍼 클래스(Integer, Long)
+  - String
+
+- ### 임베디드 타입(embedded type, 복합 값 타입)
+
+- ### 컬렉션 값 타입(collection value type)
+
+<br/>
+
+## 임베디드 타입
+
+- 새로운 값 타입을 직접 정의할 수 있음
+- int, String과 같은 값 타입
+
+<br/>
+
+### 회원 엔티티는 이름, 근무 시작일, 근무 종료일, 주소 도시, 주소 번지, 주소 우편번호를 가진다.
+
+--> 회원 엔티티는 이름, 근무 기간, 집 주소를 가진다
+
+#### --> id, name, workPeriod, homeAddress
+
+
+
+```
+@Embedded
+```
+
+### 임베디드 타입의 장점
+
+- #### 재사용
+
+- #### 높은 응집도
+
+- #### Period.isWork() 처럼 해당 값 타입만 사용하는 의미 있는 메소드를 만들 수 있음
+
+```java
+@Entity
+public class Member {
+    @Id
+    @GeneratedValue
+    @Colum(name = "MEMBER_ID")
+    private Long id;
+    
+    @Column(name = "USERNAME")
+    private String username;
+    
+    @Embedded
+    private Period workPeriod;
+    @Embedded
+    private Address homeAddress;
+}
+
+```
+
+<br/>
+
+```java
+
+@Embeddable
+public class Period {
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
+    
+    ...
+        
+}
+```
+
+
+
+<hr/>
+
