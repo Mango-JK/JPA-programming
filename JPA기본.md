@@ -1165,13 +1165,11 @@ public abstract class BaseEntity {
 <br/>
 
 <center><image src="./img/proxy.PNG"></center>
-
 <br/>
 
 # 즉시 로딩과 지연 로딩
 
 <center><image src="./img/지연로딩.PNG"></center>
-
 **FetchType.LAZY**
 
 를 사용하면 Team을 가져올 때 Proxy를 사용한다.
@@ -1216,7 +1214,6 @@ public abstract class BaseEntity {
 <br/>
 
 <hr/>
-
 ## 값 타입 분류
 
 - ### 기본값 타입
@@ -1294,4 +1291,50 @@ public class Period {
 
 
 <hr/>
+
+
+
+## JPA는 다양한 쿼리 방법을 지원
+
+- ### JPQL
+
+- ### QueryDSL
+
+- ### JPA Criteria
+
+- ### 네이티브 SQL
+
+
+
+## JPQL 소개
+
+- #### JPA를 사용하면 엔티티 객체를 중심으로 개발
+
+- #### 검색을 할 때도 테이블이 아닌 객체를 대상으로 검색
+
+- #### JPA는 SQL을 추상화한 JPQL이라는 객체 지향 쿼리 언어 제공
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
