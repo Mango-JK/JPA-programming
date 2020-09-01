@@ -50,11 +50,9 @@
 
 
 <hr/>
-
 # 1. Entity Model
 
 <center><image src="./img/entity_table.PNG"></image></center>
-
 </center>
 
 **회원(Member):** 이름과 임베디드 타입인 주소( Address ), 그리고 주문( orders ) 리스트를 가진다. 
@@ -171,7 +169,6 @@ public class Order {
 <br/>
 
 <hr/>
-
 ##### <실무에서는 @ManyToMany 를 사용하지 말자 > 
 
 **@ManyToMany** 는 편리한 것 같지만, 중간 테이블( CATEGORY_ITEM )에 컬럼을 추가할 수 없고, 세밀하게 쿼 리를 실행하기 어렵기 때문에 실무에서 사용하기에는 한계가 있다. 
@@ -183,7 +180,6 @@ public class Order {
 정리하면 **다대다** 매핑을 **일대다, 다대일 매핑**으로 풀어 내서 사용하자.
 
 <hr/>
-
 ## Entity 설계시 주의점
 
 ### 엔티티에는 가급적 Setter를 사용하지 말자
@@ -210,6 +206,8 @@ Setter가 모두 열려있다. 변경 포인트가 너무 많아서, 유지보�
 
 
 
+<hr/>
+
 #### CascadeType.ALL
 
 #####  --> persist(itemsA)
@@ -223,6 +221,59 @@ Setter가 모두 열려있다. 변경 포인트가 너무 많아서, 유지보�
 
 
 **CascadeType.ALL** 속성을 사용한다면 persist(item) 하나로 가능하다.
+
+<hr/>
+
+<center><image src="./img/fetch_join.PNG"></image></center>
+
+
+
+### 실무에서 성능을 위해 fetch join을 사용하자.
+
+​	**N + 1 문제**에서 벗어날 수 있다.
+
+<br/>
+
+<center><image src="./img/selectV4.PNG"></image></center>
+
+<br/>
+
+#### JPA에서 DTO로 바로 조회.
+
+DTO를 이용해 쿼리에서 직접 DTO를 만들어서 가져오게 되면,
+
+필요한 컬럼들만 찾아오므로 성능이 좋다.
+
+<hr/>
+
+
+
+### 정리
+
+**엔티티를 DTO로 변환**하거나, DTO로 바로 조회하는 두가지 방법은 각각 장단점이 있다.
+
+둘중 상황에 따라서 더 나은 방법을 선택하면 된다. 
+
+**엔티티로 조회하면**
+
+ **리포지토리 재사용성도 좋고**,
+
+ **개발도 단순**해진다. 
+
+따라서 권장하는 방법은 다음과 같다.
+
+<br/>
+
+#### 쿼리 방식 선택 권장 순서
+
+1. 우선 엔티티를 DTO로 변환하는 방법을 선택한다.
+2. 필요하면 페치 조인으로 성능을 최적화 한다. -> 대부분의 성능 이슈 해결
+3. 그래도 안되면 DTO로 직접 조회하는 방법을 사용한다.
+4. 최후의 방법은 JPA가 제공하는 네이티브 SQL이나 스프링 JDBC Template을 사용해서 SQL을 직접 사용한다.
+
+<hr/>
+
+
 
 
 
