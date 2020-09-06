@@ -2,10 +2,12 @@ package hello.hellojpa.service;
 
 import hello.hellojpa.domain.Member;
 import hello.hellojpa.repository.MemberRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public class MemberSerivce {
 
     private final MemberRepository memberRepository;

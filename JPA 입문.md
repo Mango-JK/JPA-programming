@@ -637,3 +637,70 @@ class MemberSerivceTest {
 **@BeforeEach** : 각 테스트 실행 전에 호출된다. 테스트가 서로 영향이 없도록 항상 새로운 객체를 생성하고, 의존관계도 새로 맺어준다. 
 
 <hr/>
+
+<br/>
+
+### 스프링 빈과 의존관계
+
+#### 컴포넌트 스캔과 자동 의존관계 설정
+
+회원 컨트롤러가 회원 서비스와 회원 리포지토리를 사용할 수 있게 의존관계를 준비하자.
+
+<br/>
+
+##### **회원 컨트롤러에 의존관계 추가** (1. 컴포넌트 스캔 방식)
+
+```java
+@Controller
+public class MemberController {
+
+    private final MemberSerivce memberSerivce;
+
+    @Autowired
+    public MemberController(MemberSerivce memberSerivce){
+        this.memberSerivce = memberSerivce;
+    }
+}
+```
+
+- 생성자에 **@Autowired**가 있으면 스프링이 연관된 객체를 스프링 컨테이너에서 찾아서 넣어준다. 이렇게 객체 의존관계를 외부에서 넣어주는 것을  **DI (Dependency Injection), 의존성 주입**이라 한다.
+- 이전 테스트에서는 개발자가 직접 주입했고, 여기서는 @Autowired에 의해 스프링이 주입해준다.
+
+<br/>
+
+> 참고: 스프링은 스프링 컨테이너에 스프링 빈을 등록할 때, 기본으로 **싱글톤**으로 등록한다(유일하게 하나만 등록해서 공유한다) 따라서 같은 스프링 빈이면 모두 같은 인스턴스다. 설정으로 싱글톤이 아니게 설정할 수 있지만, 특별한 경우를 제외하면 대부분 싱글톤을 사용한다.
+
+<br/>
+
+##### 자바 코드로 직접 스프링 빈 등록하기 (2. 스프링 빈 직접 등록)
+
+```java
+import hello.hellospring.repository.MemberRepository;
+import hello.hellospring.repository.MemoryMemberRepository;
+import hello.hellospring.service.MemberService;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class SpringConfig {
+    
+    @Bean
+    public MemberService memberService() {
+        return new MemberService(memberRepository());
+    }
+    
+    @Bean
+    public MemberRepository memberRepository() {
+        return new MemoryMemberRepository();
+    }
+}
+```
+
+> 참고: XML로 설정하는 방식도 있지만 최근에는 잘 사용하지 않으므로 생략한다.
+
+<br/>
+
+**실무에서는 주로 정형화된 컨트롤러, 서비스, 리포지토리 같은 코드는 컴포넌트 스캔을 사용한다.**
+
+<hr/>
+
