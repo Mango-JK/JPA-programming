@@ -704,3 +704,46 @@ public class SpringConfig {
 
 <hr/>
 
+###  회원 관리 예제 - 웹 MVC 개발
+
+```java
+@Controller
+public class MemberController {
+
+    private final MemberSerivce memberSerivce;
+
+    @Autowired
+    public MemberController(MemberSerivce memberSerivce){
+        this.memberSerivce = memberSerivce;
+    }
+
+    @GetMapping("/members/new")
+    public String createForm(){
+        return "members/createMemberForm";
+    }
+
+    @PostMapping("/members/new")
+    public String create(MemberForm form) {
+        Member member = new Member();
+        member.setName(form.getName());
+
+        memberSerivce.join(member);
+
+        return "redirect:/";
+    }
+
+    @GetMapping("/members")
+    public String list(Model model) {
+        List<Member> members = memberSerivce.findMembers();
+        model.addAttribute("members", members);
+        return "members/memberList";
+    }
+}
+```
+
+<br/>
+
+<hr/>
+
+### 스프링 DB 접근 기술
+
